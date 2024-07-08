@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">EgresadosUAM</string>
+    <string name="usernameField">Usuario</string>
+    <string name="password">Contraseña</string>
+</resources>
