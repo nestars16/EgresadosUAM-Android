@@ -1,4 +1,4 @@
-package com.example.egresadosuam.activities
+package com.uam.egresadosuam.activities
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,12 +14,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,25 +39,62 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.egresadosuam.R
-import com.example.egresadosuam.ui.theme.LibreFranklin
-import com.example.egresadosuam.ui.theme.UAMPrimary
-import com.example.egresadosuam.ui.theme.UAMPrimaryForeground
-import com.example.egresadosuam.viewmodel.LoginViewModel
+import androidx.navigation.NavController
+import com.uam.egresadosuam.R
+import com.uam.egresadosuam.model.RequestState
+import com.uam.egresadosuam.ui.theme.LibreFranklin
+import com.uam.egresadosuam.ui.theme.UAMPrimary
+import com.uam.egresadosuam.ui.theme.UAMPrimaryForeground
+import com.uam.egresadosuam.ui.theme.UAMPrimaryForegroundMuted
+import com.uam.egresadosuam.viewmodel.LoginViewModel
+import com.uam.egresadosuam.viewmodel.LoginViewModelFactory
 
 @Composable
-fun Login(paddingValues: PaddingValues) {
-    val loginViewModel: LoginViewModel = viewModel()
+fun LoginActivity(
+    paddingValues: PaddingValues,
+    snackbarHostState: SnackbarHostState,
+    navController: NavController
+) {
+
+    val context = LocalContext.current
+    val loginViewModel: LoginViewModel =
+        viewModel(LoginViewModel::class.java, factory = LoginViewModelFactory(context))
+
     val state = loginViewModel.state
+
     var passwordVisible by remember {
         mutableStateOf(false)
     }
+
 
     val image = if (passwordVisible)
         painterResource(id = R.drawable.visibility)
     else
         painterResource(id = R.drawable.visibility_off)
+
+
+    val successMessage = stringResource(id = R.string.loginSuccess)
+
+    LaunchedEffect(key1 = state.status) {
+        when (state.status) {
+            RequestState.Success -> {
+                snackbarHostState.showSnackbar(
+                    message = successMessage,
+                )
+            }
+
+            RequestState.Failure -> {
+                snackbarHostState.showSnackbar(
+                    message = "${state.message.orEmpty()}",
+                )
+            }
+
+            else -> {}
+        }
+        loginViewModel.restart()
+    }
 
     Column(
         modifier = Modifier
@@ -85,7 +126,7 @@ fun Login(paddingValues: PaddingValues) {
             )
         }
         TextField(
-            value = state.email,
+            value = state.req.email,
             onValueChange = { loginViewModel.onEmail(it) },
             label = {
                 Text(stringResource(id = R.string.usernameField))
@@ -99,7 +140,7 @@ fun Login(paddingValues: PaddingValues) {
         )
 
         TextField(
-            value = state.password,
+            value = state.req.password,
             modifier = Modifier.padding(5.dp),
             onValueChange = { loginViewModel.onPassword(it) },
             label = { Text(stringResource(id = R.string.password)) },
@@ -122,10 +163,22 @@ fun Login(paddingValues: PaddingValues) {
         Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
+                loginViewModel.onLogin()
             },
-            colors = ButtonDefaults.buttonColors(containerColor = UAMPrimaryForeground)
+            enabled = state.status != RequestState.Pending,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = UAMPrimaryForeground,
+                disabledContainerColor = UAMPrimaryForegroundMuted,
+            )
         ) {
-            Text(stringResource(id = R.string.loginButtonConfirm))
+            when (state.status) {
+                RequestState.Pending -> CircularProgressIndicator(
+                    color = Color.White,
+                    modifier = Modifier.height(30.dp)
+                )
+
+                else -> Text(stringResource(id = R.string.loginButtonConfirm))
+            }
         }
     }
 }

@@ -3,4 +3,6 @@
     <string name="usernameField">Usuario</string>
     <string name="password">Contraseña</string>
     <string name="loginButtonConfirm">Ingresar</string>
+    <string name="loginFailure">Correo o Contraseña Incorrecto</string>
+    <string name="loginSuccess">Ingreso Exitoso</string>
 </resources>

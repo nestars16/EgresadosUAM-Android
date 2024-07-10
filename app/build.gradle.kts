@@ -1,14 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("plugin.serialization") version "2.0.0"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
+
 android {
-    namespace = "com.example.egresadosuam"
+    namespace = "com.uam.egresadosuam"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.egresadosuam"
+        applicationId = "com.uam.egresadosuam"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -66,10 +69,23 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    //Viewmodels
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.3")
-    implementation("androidx.compose.material3:material3-android:1.2.1")
 
+    //For circle spinner
+    implementation("androidx.compose.material3:material3-android:1.2.1")
+    //For navigation
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
+    implementation("androidx.navigation:navigation-compose:2.8.0-beta04")
+
+    //For data store JWT
+    implementation("androidx.datastore:datastore:1.1.1")
+    implementation("com.google.protobuf:protobuf-javalite:3.21.11")
+    implementation("com.google.protobuf:protobuf-kotlin-lite:3.21.11")
+
+    //For http calls
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
+
 }

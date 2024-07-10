@@ -1,4 +1,4 @@
-package com.example.egresadosuam.ui.theme
+package com.uam.egresadosuam.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -12,3 +12,4 @@ val Pink40 = Color(0xFF7D5260)
 
 val UAMPrimaryForeground = Color(0xFF18181A)
 val UAMPrimary = Color(0xFF54ACC7)
+val UAMPrimaryForegroundMuted = Color(0xFF8b8b8d)
