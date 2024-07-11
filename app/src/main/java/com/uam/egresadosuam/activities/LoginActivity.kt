@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,7 +38,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.uam.egresadosuam.R
@@ -68,12 +66,10 @@ fun LoginActivity(
         mutableStateOf(false)
     }
 
-
     val image = if (passwordVisible)
         painterResource(id = R.drawable.visibility)
     else
         painterResource(id = R.drawable.visibility_off)
-
 
     val successMessage = stringResource(id = R.string.loginSuccess)
 
@@ -131,8 +127,6 @@ fun LoginActivity(
             label = {
                 Text(stringResource(id = R.string.usernameField))
             },
-            colors = TextFieldDefaults.colors(
-            ),
         )
 
         Spacer(
@@ -145,8 +139,6 @@ fun LoginActivity(
             onValueChange = { loginViewModel.onPassword(it) },
             label = { Text(stringResource(id = R.string.password)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            colors = TextFieldDefaults.colors(
-            ),
             trailingIcon = {
                 val descripcion = if (passwordVisible) "Password oculto" else "Mostrar Password"
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
