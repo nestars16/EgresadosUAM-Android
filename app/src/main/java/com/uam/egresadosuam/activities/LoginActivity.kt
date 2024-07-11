@@ -4,12 +4,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -17,6 +18,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -51,7 +54,6 @@ import com.uam.egresadosuam.viewmodel.LoginViewModelFactory
 
 @Composable
 fun LoginActivity(
-    paddingValues: PaddingValues,
     snackbarHostState: SnackbarHostState,
     navController: NavController
 ) {
@@ -92,84 +94,91 @@ fun LoginActivity(
         loginViewModel.restart()
     }
 
-    Column(
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        contentWindowInsets = WindowInsets.statusBars,
         modifier = Modifier
-            .background(UAMPrimary)
-            .padding(paddingValues)
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(15.dp),
-            verticalAlignment = Alignment.CenterVertically
+            .fillMaxSize()
+            .background(UAMPrimaryForeground),
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .background(UAMPrimary)
+                .padding(innerPadding)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Text(
-                text = "Egresados",
-                color = Color(0xFFFFFFFF),
-                fontFamily = LibreFranklin,
-                fontWeight = FontWeight.Bold,
-                fontSize = 8.em,
-            )
-            Image(
-                painter = painterResource(
-                    id = R.drawable.universidad_americana_2020
-                ),
-                contentDescription = "Logo de universidad americana",
-                modifier = Modifier
-                    .height(150.dp)
-                    .width(150.dp)
-            )
-        }
-        TextField(
-            value = state.req.email,
-            onValueChange = { loginViewModel.onEmail(it) },
-            label = {
-                Text(stringResource(id = R.string.usernameField))
-            },
-        )
-
-        Spacer(
-            modifier = Modifier.height(30.dp)
-        )
-
-        TextField(
-            value = state.req.password,
-            modifier = Modifier.padding(5.dp),
-            onValueChange = { loginViewModel.onPassword(it) },
-            label = { Text(stringResource(id = R.string.password)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            trailingIcon = {
-                val descripcion = if (passwordVisible) "Password oculto" else "Mostrar Password"
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(painter = image, descripcion)
-                }
-            },
-            visualTransformation =
-            if (passwordVisible) {
-                VisualTransformation.None
-            } else {
-                PasswordVisualTransformation()
-            }
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        Button(
-            onClick = {
-                loginViewModel.onLogin()
-            },
-            enabled = state.status != RequestState.Pending,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = UAMPrimaryForeground,
-                disabledContainerColor = UAMPrimaryForegroundMuted,
-            )
-        ) {
-            when (state.status) {
-                RequestState.Pending -> CircularProgressIndicator(
-                    color = Color.White,
-                    modifier = Modifier.height(30.dp)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(15.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Egresados",
+                    color = Color(0xFFFFFFFF),
+                    fontFamily = LibreFranklin,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 8.em,
                 )
+                Image(
+                    painter = painterResource(
+                        id = R.drawable.universidad_americana_2020
+                    ),
+                    contentDescription = "Logo de universidad americana",
+                    modifier = Modifier
+                        .height(150.dp)
+                        .width(150.dp)
+                )
+            }
+            TextField(
+                value = state.req.email,
+                onValueChange = { loginViewModel.onEmail(it) },
+                label = {
+                    Text(stringResource(id = R.string.usernameField))
+                },
+            )
 
-                else -> Text(stringResource(id = R.string.loginButtonConfirm))
+            Spacer(
+                modifier = Modifier.height(30.dp)
+            )
+            TextField(
+                value = state.req.password,
+                modifier = Modifier.padding(5.dp),
+                onValueChange = { loginViewModel.onPassword(it) },
+                label = { Text(stringResource(id = R.string.password)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                trailingIcon = {
+                    val descripcion = if (passwordVisible) "Password oculto" else "Mostrar Password"
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(painter = image, descripcion)
+                    }
+                },
+                visualTransformation =
+                if (passwordVisible) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                }
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                onClick = {
+                    loginViewModel.onLogin()
+                },
+                enabled = state.status != RequestState.Pending,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = UAMPrimaryForeground,
+                    disabledContainerColor = UAMPrimaryForegroundMuted,
+                )
+            ) {
+                when (state.status) {
+                    RequestState.Pending -> CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier.height(30.dp)
+                    )
+
+                    else -> Text(stringResource(id = R.string.loginButtonConfirm))
+                }
             }
         }
     }

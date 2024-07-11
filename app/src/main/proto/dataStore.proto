@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option java_package = "com.uam.egresadosuam";
+
+message UserCredentials {
+  string jwt = 1;
+  string id = 2;
+}

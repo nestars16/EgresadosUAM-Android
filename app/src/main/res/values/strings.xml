@@ -5,4 +5,5 @@
     <string name="loginButtonConfirm">Ingresar</string>
     <string name="loginFailure">Correo o Contraseña Incorrecto</string>
     <string name="loginSuccess">Ingreso Exitoso</string>
+    <string name="addQuestion">Añade una pregunta</string>
 </resources>
