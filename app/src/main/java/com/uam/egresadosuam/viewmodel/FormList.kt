@@ -3,7 +3,6 @@ package com.uam.egresadosuam.viewmodel
 import android.content.Context
 import android.util.Log
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -15,26 +14,34 @@ import com.uam.egresadosuam.navigation.Login
 import com.uam.egresadosuam.remote.ApiAdapter
 import com.uam.egresadosuam.remote.ApiForm
 import com.uam.egresadosuam.repository.UserCredentialsRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class FormListViewModel(
     private val userCredentialsRepository: UserCredentialsRepository,
-    id: String,
     navController: NavController,
     snackbarHostState: SnackbarHostState
 ) :
     ViewModel() {
-    var forms = mutableStateOf(ArrayList<Form>())
 
-    val apiForm: ApiForm by lazy {
+    private val _reqData = MutableStateFlow<List<Form>>(emptyList())
+    val reqData = _reqData.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
+    private val apiForm: ApiForm by lazy {
         ApiAdapter.getInstance(userCredentialsRepository).create(ApiForm::class.java)
     }
 
     init {
         viewModelScope.launch {
+            _isLoading.value = true
             val response = try {
-                apiForm.getAllForms()
+                val innerResponse = apiForm.getAllUnansweredForms()
+                innerResponse
             } catch (err: HttpException) {
                 val rawError = err.response()?.errorBody()?.string()
                 val errorResponse = rawError?.let {
@@ -55,23 +62,22 @@ class FormListViewModel(
                 }
 
                 is RequestResponse.Success<List<Form>> -> {
-                    forms = mutableStateOf(response.data as ArrayList<Form>)
+                    _reqData.value = response.data
                 }
             }
+            _isLoading.value = false
         }
     }
 }
 
 class FormListViewModelFactory(
     private val context: Context,
-    private val id: String,
     private val navController: NavController,
     private val snackbarHostState: SnackbarHostState
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return FormListViewModel(
             UserCredentialsRepository(context),
-            id,
             navController,
             snackbarHostState
         ) as T

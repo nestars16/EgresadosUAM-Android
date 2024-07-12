@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.uam.egresadosuam.activities.FormAnswerActivity
+import com.uam.egresadosuam.activities.FormListActivity
 import com.uam.egresadosuam.activities.LoginActivity
 import kotlinx.serialization.Serializable
 
@@ -14,25 +15,35 @@ import kotlinx.serialization.Serializable
 object Login
 
 @Serializable
-data class FormCreate(val id: String)
+object FormList
+
+@Serializable
+data class FormAnswer(val id: String)
 
 @Composable
 fun AppNavigation(snackbarHostState: SnackbarHostState) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = FormCreate) {
+    NavHost(navController = navController, startDestination = Login) {
+
         composable<Login> {
             LoginActivity(
                 snackbarHostState = snackbarHostState,
                 navController = navController
             )
         }
-        composable<FormCreate> {
-            val form = it.toRoute<FormCreate>()
+        composable<FormAnswer> {
+            val form = it.toRoute<FormAnswer>()
+
             FormAnswerActivity(
                 navController = navController,
                 formId = form.id,
                 snackbarHostState = snackbarHostState,
             )
+
+        }
+
+        composable<FormList> {
+            FormListActivity(navController = navController, snackbarHostState = snackbarHostState)
         }
     }
 }

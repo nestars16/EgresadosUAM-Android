@@ -25,7 +25,7 @@ class LoginViewModel(private val userCredentialsRepository: UserCredentialsRepos
 
     var state by mutableStateOf(LoginState())
 
-    val apiEgresado: ApiEgresado by lazy {
+    private val apiEgresado: ApiEgresado by lazy {
         ApiAdapter.getInstance(userCredentialsRepository).create(ApiEgresado::class.java)
     }
 
@@ -59,6 +59,7 @@ class LoginViewModel(private val userCredentialsRepository: UserCredentialsRepos
             }
 
             state = when (response) {
+
                 is RequestResponse.Success<LoginData> -> {
                     userCredentialsRepository.save(response.data.token)
                     state.copy(status = RequestState.Success, message = "")
@@ -79,6 +80,7 @@ class LoginViewModel(private val userCredentialsRepository: UserCredentialsRepos
     )
 }
 
+@Suppress("UNCHECKED_CAST")
 class LoginViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return LoginViewModel(UserCredentialsRepository(context)) as T

@@ -4,11 +4,11 @@ import android.util.ArraySet
 
 
 data class Question(
-    private val id: String,
-    private val question: String,
-    private val type: QuestionType,
-    private val possibleAnswers: List<String>,
-    private val answers: List<String>,
+    val id: String,
+    val question: String,
+    val type: QuestionType,
+    val possibleAnswers: List<String>,
+    val answers: MutableList<String>,
 )
 
 enum class QuestionType {
@@ -17,10 +17,10 @@ enum class QuestionType {
 }
 
 data class Form(
-    private val id: String = "",
-    private val name: String = "",
-    private val questions: List<Question> = ArrayList(),
-    private val answersCollectedFrom: Set<String> = ArraySet(),
-    private val description: String? = null,
-    private val published: Boolean = false,
+    val id: String = "",
+    val name: String = "",
+    val questions: List<Question> = ArrayList(),
+    val answersCollectedFrom: MutableSet<String> = ArraySet(),
+    val description: String = "",
+    val published: Boolean = false,
 )

@@ -45,6 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.uam.egresadosuam.R
 import com.uam.egresadosuam.model.RequestState
+import com.uam.egresadosuam.navigation.FormList
 import com.uam.egresadosuam.ui.theme.LibreFranklin
 import com.uam.egresadosuam.ui.theme.UAMPrimary
 import com.uam.egresadosuam.ui.theme.UAMPrimaryForeground
@@ -78,6 +79,7 @@ fun LoginActivity(
     LaunchedEffect(key1 = state.status) {
         when (state.status) {
             RequestState.Success -> {
+                navController.navigate(FormList)
                 snackbarHostState.showSnackbar(
                     message = successMessage,
                 )
@@ -87,13 +89,15 @@ fun LoginActivity(
                 snackbarHostState.showSnackbar(
                     message = "${state.message.orEmpty()}",
                 )
+                loginViewModel.restart()
             }
 
-            else -> {}
+            else -> {
+                loginViewModel.restart()
+            }
         }
-        loginViewModel.restart()
-    }
 
+    }
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         contentWindowInsets = WindowInsets.statusBars,
